@@ -2044,6 +2044,7 @@ interface SecurityPolicyViolationEventInit extends EventInit {
 }
 
 interface ShadowRootInit {
+    clonable?: boolean;
     delegatesFocus?: boolean;
     mode: ShadowRootMode;
     serializable?: boolean;
