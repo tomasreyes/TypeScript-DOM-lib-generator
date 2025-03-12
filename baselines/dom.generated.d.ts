@@ -14864,7 +14864,7 @@ interface IDBObjectStore {
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/IDBObjectStore/keyPath)
      */
-    readonly keyPath: string | string[];
+    readonly keyPath: string | string[] | null;
     /**
      * Returns the name of the store.
      *
