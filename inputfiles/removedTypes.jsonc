@@ -356,6 +356,13 @@
                     }
                 }
             },
+            "FetchEventInit": {
+                "members": {
+                    "member": {
+                        "replacesClientId": null // Not implemented as of 2025-04
+                    }
+                }
+            },
             "FocusOptions": {
                 "members": {
                     "member": {
@@ -783,6 +790,13 @@
                         "packetsReceivedWithEct1": null, // No implementation as of 2025-04
                         "packetsReportedAsLost": null, // No implementation as of 2025-04
                         "packetsReportedAsLostButRecovered": null // No implementation as of 2025-04
+                    }
+                }
+            },
+            "RTCPeerConnectionIceEventInit": {
+                "members": {
+                    "member": {
+                        "url": null // WebKit only as of 2025-04
                     }
                 }
             },

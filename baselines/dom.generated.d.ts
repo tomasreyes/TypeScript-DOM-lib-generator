@@ -1770,7 +1770,6 @@ interface RTCPeerConnectionIceErrorEventInit extends EventInit {
 
 interface RTCPeerConnectionIceEventInit extends EventInit {
     candidate?: RTCIceCandidate | null;
-    url?: string | null;
 }
 
 interface RTCReceivedRtpStreamStats extends RTCRtpStreamStats {
