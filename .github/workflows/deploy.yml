@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   deploy:
+    if: github.repository == 'microsoft/TypeScript-DOM-lib-generator'
     runs-on: ubuntu-latest
 
     steps:
