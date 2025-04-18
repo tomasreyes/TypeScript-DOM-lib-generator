@@ -303,7 +303,7 @@ declare var ByteLengthQueuingStrategy: {
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CompressionStream)
  */
 interface CompressionStream extends GenericTransformStream {
-    readonly readable: ReadableStream<Uint8Array>;
+    readonly readable: ReadableStream<Uint8Array<ArrayBuffer>>;
     readonly writable: WritableStream<BufferSource>;
 }
 
@@ -433,7 +433,7 @@ declare var DOMException: {
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DecompressionStream)
  */
 interface DecompressionStream extends GenericTransformStream {
-    readonly readable: ReadableStream<Uint8Array>;
+    readonly readable: ReadableStream<Uint8Array<ArrayBuffer>>;
     readonly writable: WritableStream<BufferSource>;
 }
 
@@ -786,7 +786,7 @@ interface ReadableByteStreamController {
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/close) */
     close(): void;
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/enqueue) */
-    enqueue(chunk: ArrayBufferView): void;
+    enqueue(chunk: ArrayBufferView<ArrayBuffer>): void;
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableByteStreamController/error) */
     error(e?: any): void;
 }
@@ -820,7 +820,7 @@ interface ReadableStream<R = any> {
 
 declare var ReadableStream: {
     prototype: ReadableStream;
-    new(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number }): ReadableStream<Uint8Array>;
+    new(underlyingSource: UnderlyingByteSource, strategy?: { highWaterMark?: number }): ReadableStream<Uint8Array<ArrayBuffer>>;
     new<R = any>(underlyingSource: UnderlyingDefaultSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
     new<R = any>(underlyingSource?: UnderlyingSource<R>, strategy?: QueuingStrategy<R>): ReadableStream<R>;
 };
@@ -839,7 +839,7 @@ interface ReadableStreamBYOBReader extends ReadableStreamGenericReader {
 
 declare var ReadableStreamBYOBReader: {
     prototype: ReadableStreamBYOBReader;
-    new(stream: ReadableStream<Uint8Array>): ReadableStreamBYOBReader;
+    new(stream: ReadableStream<Uint8Array<ArrayBuffer>>): ReadableStreamBYOBReader;
 };
 
 /**
@@ -849,11 +849,11 @@ declare var ReadableStreamBYOBReader: {
  */
 interface ReadableStreamBYOBRequest {
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBRequest/view) */
-    readonly view: ArrayBufferView | null;
+    readonly view: ArrayBufferView<ArrayBuffer> | null;
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBRequest/respond) */
     respond(bytesWritten: number): void;
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/ReadableStreamBYOBRequest/respondWithNewView) */
-    respondWithNewView(view: ArrayBufferView): void;
+    respondWithNewView(view: ArrayBufferView<ArrayBuffer>): void;
 }
 
 declare var ReadableStreamBYOBRequest: {
@@ -982,13 +982,13 @@ interface TextEncoder extends TextEncoderCommon {
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoder/encode)
      */
-    encode(input?: string): Uint8Array;
+    encode(input?: string): Uint8Array<ArrayBuffer>;
     /**
      * Runs the UTF-8 encoder on source, stores the result of that operation into destination, and returns the progress made as an object wherein read is the number of converted code units of source and written is the number of bytes modified in destination.
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoder/encodeInto)
      */
-    encodeInto(source: string, destination: Uint8Array): TextEncoderEncodeIntoResult;
+    encodeInto(source: string, destination: Uint8Array<ArrayBufferLike>): TextEncoderEncodeIntoResult;
 }
 
 declare var TextEncoder: {
@@ -1011,7 +1011,7 @@ interface TextEncoderCommon {
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/TextEncoderStream)
  */
 interface TextEncoderStream extends GenericTransformStream, TextEncoderCommon {
-    readonly readable: ReadableStream<Uint8Array>;
+    readonly readable: ReadableStream<Uint8Array<ArrayBuffer>>;
     readonly writable: WritableStream<string>;
 }
 
@@ -1498,8 +1498,8 @@ declare var currentTime: number;
 declare var sampleRate: number;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/AudioWorkletGlobalScope/registerProcessor) */
 declare function registerProcessor(name: string, processorCtor: AudioWorkletProcessorConstructor): void;
-type AllowSharedBufferSource = ArrayBuffer | ArrayBufferView;
-type BufferSource = ArrayBufferView | ArrayBuffer;
+type AllowSharedBufferSource = ArrayBufferLike | ArrayBufferView<ArrayBufferLike>;
+type BufferSource = ArrayBufferView<ArrayBuffer> | ArrayBuffer;
 type DOMHighResTimeStamp = number;
 type EventListenerOrEventListenerObject = EventListener | EventListenerObject;
 type MessageEventSource = MessagePort;
