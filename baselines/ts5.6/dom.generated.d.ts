@@ -6889,7 +6889,7 @@ interface Crypto {
      */
     readonly subtle: SubtleCrypto;
     /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Crypto/getRandomValues) */
-    getRandomValues<T extends ArrayBufferView | null>(array: T): T;
+    getRandomValues<T extends ArrayBufferView>(array: T): T;
     /**
      * Available only in secure contexts.
      *
