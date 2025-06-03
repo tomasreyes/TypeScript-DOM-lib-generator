@@ -1,6 +1,4 @@
 import fs from "fs/promises";
-import { basename } from "path";
-
 const basePath = new URL(
   "../../inputfiles/mdn/files/en-us/web/api/",
   import.meta.url,
@@ -47,66 +45,104 @@ function extractSummary(markdown: string): string {
     return sentenceMatch[0]; // Return the first full sentence
   }
 
-  return normalizedText.split(" ")[0] || ""; // Fallback: first word if no sentence found
+  const firstWord = normalizedText.split(" ")[0];
+  return firstWord || "";
 }
 
-async function getDirectories(dirPath: URL): Promise<URL[]> {
-  try {
-    const entries = await fs.readdir(dirPath, {
-      withFileTypes: true,
-    });
-    return entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => new URL(entry.name + "/", dirPath));
-  } catch (error) {
-    console.error("Error reading directories:", error);
-    return [];
-  }
-}
+async function walkDirectory(dir: URL): Promise<URL[]> {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const parentDirName = dir.pathname.split("/").at(-1);
+  let results: URL[] = [];
 
-async function getIndexMdContents(
-  folders: URL[],
-): Promise<{ [key: string]: string }> {
-  const results: { [key: string]: string } = {};
-
-  for (const folder of folders) {
-    const indexPath = new URL("index.md", folder);
-
-    try {
-      const content = await fs.readFile(indexPath, "utf-8");
-
-      // Improved title extraction
-      const titleMatch = content.match(/title:\s*["']?([^"'\n]+)["']?/);
-      const filename = basename(folder.toString());
-      const title = titleMatch
-        ? titleMatch[1].replace(/ extension$/, "")
-        : filename || "";
-
-      const summary = extractSummary(content);
-      results[title] = summary;
-    } catch (error) {
-      console.warn(`Skipping ${indexPath}: ${error}`);
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      if (entry.name === parentDirName) continue;
+      const subDir = new URL(`${entry.name}/`, dir);
+      results = results.concat(await walkDirectory(subDir));
+    } else if (entry.isFile() && entry.name === "index.md") {
+      results.push(new URL(entry.name, dir));
     }
   }
 
   return results;
 }
 
-export async function generateDescription(): Promise<Record<string, string>> {
+const paths: Record<string, string[]> = {
+  "web-api-instance-property": ["properties", "property"],
+  "web-api-static-property": ["properties", "property"],
+  "web-api-instance-method": ["methods", "method"],
+  "web-api-static-method": ["methods", "method"],
+  "web-api-interface": [],
+  "webgl-extension": [],
+  "webgl-extension-method": ["methods", "method"],
+};
+
+function generatePath(content: string): string[] | undefined {
+  const pageType = content.match(/\npage-type: (.+)\n/)!;
+  const type = pageType[1];
+  return paths[type];
+}
+
+function extractSlug(content: string): string[] {
+  const match = content.match(/\nslug: (.+)\n/)!;
+  const url = match[1].split(":").pop()!;
+  const normalized = url.endsWith("_static") ? url.slice(0, -7) : url;
+  const parts = normalized.split("/").slice(2); // skip `Web/API/...`
+  return parts; // Keep only top-level and member name
+}
+
+function ensureLeaf(obj: Record<string, any>, keys: string[]) {
+  let leaf = obj;
+  for (const key of keys) {
+    leaf[key] ??= {};
+    leaf = leaf[key];
+  }
+  return leaf;
+}
+
+function insertComment(
+  root: Record<string, any>,
+  slug: string[],
+  summary: string,
+  path: string[],
+) {
+  if (!path.length) {
+    const iface = ensureLeaf(root, slug);
+    iface.comment = summary;
+  } else {
+    const [ifaceName, memberName] = slug;
+    const target = ensureLeaf(root, [ifaceName, ...path, memberName]);
+    target.comment = summary;
+  }
+}
+
+export async function generateDescriptions(): Promise<{
+  interfaces: { interface: Record<string, any> };
+}> {
   const stats = await fs.stat(basePath);
   if (!stats.isDirectory()) {
     throw new Error(
       "MDN submodule does not exist; try running `git submodule update --init`",
     );
   }
-  try {
-    const folders = await getDirectories(basePath);
-    if (folders.length > 0) {
-      return await getIndexMdContents(folders);
-    }
-  } catch (error) {
-    console.error("Error generating API descriptions:", error);
-  }
 
-  return {};
+  const results: Record<string, any> = {};
+  const indexPaths = await walkDirectory(basePath);
+
+  await Promise.all(
+    indexPaths.map(async (fileURL) => {
+      // XXX: Response.json currently causes racy collision
+      if (fileURL.pathname.endsWith("web/api/response/json/index.md")) {
+        return;
+      }
+      const content = await fs.readFile(fileURL, "utf-8");
+      const slug = extractSlug(content);
+      const generatedPath = generatePath(content);
+      if (!slug || slug.length === 0 || !generatedPath) return;
+
+      const summary = extractSummary(content);
+      insertComment(results, slug, summary, generatedPath);
+    }),
+  );
+  return { interfaces: { interface: results } };
 }
