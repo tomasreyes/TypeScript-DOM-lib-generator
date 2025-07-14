@@ -2124,6 +2124,11 @@ interface ScrollOptions {
     behavior?: ScrollBehavior;
 }
 
+interface ScrollTimelineOptions {
+    axis?: ScrollAxis;
+    source?: Element | null;
+}
+
 interface ScrollToOptions extends ScrollOptions {
     left?: number;
     top?: number;
@@ -2511,6 +2516,12 @@ interface VideoFrameInit {
     duration?: number;
     timestamp?: number;
     visibleRect?: DOMRectInit;
+}
+
+interface ViewTimelineOptions {
+    axis?: ScrollAxis;
+    inset?: string | (CSSNumericValue | CSSKeywordValue)[];
+    subject?: Element;
 }
 
 interface WaveShaperOptions extends AudioNodeOptions {
@@ -30480,6 +30491,31 @@ declare var ScriptProcessorNode: {
 };
 
 /**
+ * The **`ScrollTimeline`** interface of the Web Animations API represents a scroll progress timeline (see CSS scroll-driven animations for more details).
+ *
+ * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ScrollTimeline)
+ */
+interface ScrollTimeline extends AnimationTimeline {
+    /**
+     * The **`axis`** read-only property of the An enumerated value.
+     *
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ScrollTimeline/axis)
+     */
+    readonly axis: ScrollAxis;
+    /**
+     * The **`source`** read-only property of the An Element.
+     *
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ScrollTimeline/source)
+     */
+    readonly source: Element | null;
+}
+
+declare var ScrollTimeline: {
+    prototype: ScrollTimeline;
+    new(options?: ScrollTimelineOptions): ScrollTimeline;
+};
+
+/**
  * The **`SecurityPolicyViolationEvent`** interface inherits from Event, and represents the event object of a `securitypolicyviolation` event sent on an Element/securitypolicyviolation_event, Document/securitypolicyviolation_event, or WorkerGlobalScope/securitypolicyviolation_event when its Content Security Policy (CSP) is violated.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/SecurityPolicyViolationEvent)
@@ -33680,6 +33716,37 @@ interface VideoPlaybackQuality {
 declare var VideoPlaybackQuality: {
     prototype: VideoPlaybackQuality;
     new(): VideoPlaybackQuality;
+};
+
+/**
+ * The **`ViewTimeline`** interface of the Web Animations API represents a view progress timeline (see CSS scroll-driven animations for more details).
+ *
+ * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ViewTimeline)
+ */
+interface ViewTimeline extends ScrollTimeline {
+    /**
+     * The **`endOffset`** read-only property of the ViewTimeline interface returns a CSSNumericValue representing the ending (100% progress) scroll position of the timeline as an offset from the start of the overflowing section of content in the scroller.
+     *
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ViewTimeline/endOffset)
+     */
+    readonly endOffset: CSSNumericValue;
+    /**
+     * The **`startOffset`** read-only property of the ViewTimeline interface returns a CSSNumericValue representing the starting (0% progress) scroll position of the timeline as an offset from the start of the overflowing section of content in the scroller.
+     *
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ViewTimeline/startOffset)
+     */
+    readonly startOffset: CSSNumericValue;
+    /**
+     * The **`subject`** read-only property of the ViewTimeline interface returns a reference to the subject element whose visibility within its nearest ancestor scrollable element (scroller) is driving the progress of the timeline.
+     *
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/ViewTimeline/subject)
+     */
+    readonly subject: Element;
+}
+
+declare var ViewTimeline: {
+    prototype: ViewTimeline;
+    new(options?: ViewTimelineOptions): ViewTimeline;
 };
 
 /**
@@ -39737,6 +39804,7 @@ type ResidentKeyRequirement = "discouraged" | "preferred" | "required";
 type ResizeObserverBoxOptions = "border-box" | "content-box" | "device-pixel-content-box";
 type ResizeQuality = "high" | "low" | "medium" | "pixelated";
 type ResponseType = "basic" | "cors" | "default" | "error" | "opaque" | "opaqueredirect";
+type ScrollAxis = "block" | "inline" | "x" | "y";
 type ScrollBehavior = "auto" | "instant" | "smooth";
 type ScrollLogicalPosition = "center" | "end" | "nearest" | "start";
 type ScrollRestoration = "auto" | "manual";
