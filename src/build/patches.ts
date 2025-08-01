@@ -1,7 +1,8 @@
 import { parse, type Node } from "kdljs";
-import type { Enum, Event } from "./types";
+import type { Enum, Event, Property } from "./types";
 import { readdir, readFile } from "fs/promises";
 import { merge } from "./helpers.js";
+type Properties = Record<string, Partial<Property>>;
 
 /**
  * Converts patch files in KDL to match the [types](types.d.ts).
@@ -54,10 +55,9 @@ function handleEnum(node: Node, enums: Record<string, Enum>) {
 }
 
 /**
- * Handles a mixin node by extracting its name and associated events.
+ * Handles a mixin node by extracting its name and associated members.
  * Throws an error if the mixin name is missing.
- * If the mixin node specifies "event" as its second value, it collects all child nodes as events,
- * each with a name and type, and adds them to the mixins record under the mixin's name.
+ * Adds them to the mixins record under the mixin's name.
  * @param node The mixin node to handle.
  * @param mixins The record of mixins to update.
  */
@@ -66,14 +66,48 @@ function handleMixin(node: Node, mixins: Record<string, any>) {
   if (typeof name !== "string") {
     throw new Error("Missing mixin name");
   }
-  const rawEvents = node.children.filter(
-    (child: any) => child.name === "event",
-  );
-  const event: Event[] = rawEvents.map((child: any) => ({
-    name: child.values[0],
-    type: child.properties.type,
-  }));
-  mixins[name] = { name, events: { event } };
+
+  const event: Event[] = [];
+  const property: Properties = {};
+
+  for (const child of node.children) {
+    switch (child.name) {
+      case "event":
+        event.push(handleEvent(child));
+        break;
+      case "property": {
+        const propName = child.values[0] as string;
+        property[propName] = handleProperty(child);
+        break;
+      }
+      default:
+        throw new Error(`Unknown node name: ${child.name}`);
+    }
+  }
+
+  mixins[name] = { name, events: { event }, properties: { property } };
+}
+
+/**
+ * Handles a child node of type "event" and adds it to the event array.
+ * @param child The child node to handle.
+ */
+function handleEvent(child: Node) {
+  return {
+    name: child.values[0] as string,
+    type: child.properties.type as string,
+  };
+}
+
+/**
+ * Handles a child node of type "property" and adds it to the property object.
+ * @param child The child node to handle.
+ */
+function handleProperty(child: Node) {
+  return {
+    name: child.values[0] as string,
+    exposed: child.properties?.exposed as string,
+  };
 }
 
 /**
