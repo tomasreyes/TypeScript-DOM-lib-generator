@@ -19,12 +19,6 @@
                     }
                 }
             },
-            "ChildNode": {
-                "extends": "Node"
-            },
-            "ParentNode": {
-                "extends": "Node"
-            },
             "Animatable": {
                 "methods": {
                     "method": {
