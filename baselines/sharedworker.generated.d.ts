@@ -10015,7 +10015,7 @@ interface WebSocket extends EventTarget {
      *
      * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WebSocket/readyState)
      */
-    readonly readyState: number;
+    readonly readyState: 0 | 1 | 2 | 3;
     /**
      * The **`WebSocket.url`** read-only property returns the absolute URL of the WebSocket as resolved by the constructor.
      *
