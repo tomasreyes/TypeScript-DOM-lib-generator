@@ -3315,9 +3315,6 @@
                     }
                 }
             },
-            "ContactAddress": {
-                "name": "PaymentAddress"
-            },
             "HTMLMediaElement": {
                 "properties": {
                     "property": {
@@ -3362,27 +3359,6 @@
             // https://github.com/w3c/media-source/pull/282, but not supported anywhere yet
             "MediaSource": {
                 "exposed": "Window"
-            },
-
-            // Payment Request added shippingAddress with a different type
-            // https://github.com/w3c/payment-request/pull/996
-            "PaymentRequest": {
-                "properties": {
-                    "property": {
-                        "shippingAddress": {
-                            "type": "PaymentAddress"
-                        }
-                    }
-                }
-            },
-            "PaymentResponse": {
-                "properties": {
-                    "property": {
-                        "shippingAddress": {
-                            "type": "PaymentAddress"
-                        }
-                    }
-                }
             },
 
             "SourceBuffer": {
