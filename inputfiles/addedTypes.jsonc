@@ -802,18 +802,6 @@
     },
     "dictionaries": {
         "dictionary": {
-            "KeyboardEventInit": {
-                "members": {
-                    "member": {
-                        "charCode": {
-                            "deprecated": true
-                        },
-                        "keyCode": {
-                            "deprecated": true
-                        }
-                    }
-                }
-            },
             "ReadableStreamReadDoneResult": {
                 "name": "ReadableStreamReadDoneResult",
                 "typeParameters": [
