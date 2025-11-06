@@ -9,6 +9,7 @@ import type {
   Typed,
   Dictionary,
   Member,
+  Signature,
 } from "./types.js";
 import { readdir, readFile } from "fs/promises";
 import { merge } from "./helpers.js";
@@ -16,6 +17,10 @@ import { merge } from "./helpers.js";
 type DeepPartial<T> = T extends object
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : T;
+
+interface OverridableMethod extends Omit<Method, "signature"> {
+  signature: DeepPartial<Signature>[] | Record<number, DeepPartial<Signature>>;
+}
 
 function optionalMember<const T>(prop: string, type: T, value?: Value) {
   if (value === undefined) {
@@ -154,7 +159,7 @@ function handleMixinandInterfaces(
 
   const event: Event[] = [];
   const property: Record<string, Partial<Property>> = {};
-  const method: Record<string, Partial<Method>> = {};
+  let method: Record<string, DeepPartial<OverridableMethod>> = {};
 
   for (const child of node.children) {
     switch (child.name) {
@@ -168,7 +173,10 @@ function handleMixinandInterfaces(
       }
       case "method": {
         const methodName = string(child.values[0]);
-        method[methodName] = handleMethod(child);
+        const m = handleMethod(child);
+        method = merge(method, {
+          [methodName]: m,
+        });
         break;
       }
       default:
@@ -238,7 +246,7 @@ function handleProperty(child: Node): Partial<Property> {
  * Handles a child node of type "method" and adds it to the method object.
  * @param child The child node to handle.
  */
-function handleMethod(child: Node): Partial<Method> {
+function handleMethod(child: Node): DeepPartial<OverridableMethod> {
   const name = string(child.values[0]);
 
   let typeNode: Node | undefined;
@@ -265,14 +273,24 @@ function handleMethod(child: Node): Partial<Method> {
     }
   }
 
-  const signature: Method["signature"] = [
-    {
-      param: params,
-      ...(typeNode
-        ? handleTyped(typeNode)
-        : { type: string(child.properties?.returns) }),
-    },
-  ];
+  // Determine the actual signature object
+  const signatureObj: DeepPartial<Signature> = {
+    param: params,
+    ...(typeNode
+      ? handleTyped(typeNode)
+      : {
+          type: string(child.properties?.returns),
+          subtype: undefined,
+        }),
+  };
+
+  let signature: OverridableMethod["signature"];
+  const signatureIndex = child.properties?.signatureIndex;
+  if (typeof signatureIndex == "number") {
+    signature = { [signatureIndex]: signatureObj };
+  } else {
+    signature = [signatureObj];
+  }
   return { name, signature };
 }
 
