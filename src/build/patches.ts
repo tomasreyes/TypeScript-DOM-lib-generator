@@ -7,6 +7,7 @@ import type {
   WebIdl,
   Method,
   Typed,
+  Param,
   Dictionary,
   Member,
   Signature,
@@ -261,7 +262,7 @@ function handleMethod(child: Node): DeepPartial<OverridableMethod> {
   const name = string(child.values[0]);
 
   let typeNode: Node | undefined;
-  const params: { name: string; type: string }[] = [];
+  const params: Partial<Param>[] = [];
 
   for (const c of child.children) {
     switch (c.name) {
@@ -275,7 +276,12 @@ function handleMethod(child: Node): DeepPartial<OverridableMethod> {
       case "param":
         params.push({
           name: string(c.values[0]),
-          type: string(c.properties.type),
+          ...optionalMember("type", "string", c.properties?.type),
+          ...optionalMember(
+            "overrideType",
+            "string",
+            c.properties?.overrideType,
+          ),
         });
         break;
 
