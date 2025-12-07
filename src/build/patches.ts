@@ -81,8 +81,8 @@ function handleTypeParameters(value: Value | Node) {
   };
 }
 
-function undefinedIfEmpty(object: object, output: object) {
-  return Object.entries(object).length ? output : undefined;
+function optionalNestedMember<T>(prop: string, object: object, output: T) {
+  return Object.entries(object).length ? { [prop]: output } : {};
 }
 
 /**
@@ -119,10 +119,12 @@ function convertKDLNodes(nodes: Node[]): DeepPartial<WebIdl> {
   }
 
   return {
-    enums: undefinedIfEmpty(enums, { enum: enums }),
-    mixins: undefinedIfEmpty(mixin, { mixin }),
-    interfaces: undefinedIfEmpty(interfaces, { interface: interfaces }),
-    dictionaries: undefinedIfEmpty(dictionary, { dictionary }),
+    ...optionalNestedMember("enums", enums, { enum: enums }),
+    ...optionalNestedMember("mixins", mixin, { mixin }),
+    ...optionalNestedMember("interfaces", interfaces, {
+      interface: interfaces,
+    }),
+    ...optionalNestedMember("dictionaries", dictionary, { dictionary }),
   };
 }
 
@@ -202,7 +204,7 @@ function handleMixinAndInterfaces(
   };
   return {
     name,
-    events: { event },
+    ...optionalNestedMember("events", event, { event }),
     properties: { property },
     methods: { method },
     ...optionalMember("extends", "string", node.properties?.extends),
@@ -256,7 +258,7 @@ function handleProperty(child: Node): Partial<Property> {
       ? handleTyped(typeNode)
       : optionalMember("type", "string", child.properties?.type)),
     ...optionalMember("readonly", "boolean", child.properties?.readonly),
-    ...optionalMember("deprecated", "boolean", child.properties?.deprecated),
+    ...optionalMember("deprecated", "string", child.properties?.deprecated),
   };
 }
 
@@ -379,7 +381,7 @@ function handleMember(c: Node): Partial<Member> {
     name,
     ...optionalMember("type", "string", c.properties?.type),
     ...optionalMember("required", "boolean", c.properties?.required),
-    ...optionalMember("deprecated", "boolean", c.properties?.deprecated),
+    ...optionalMember("deprecated", "string", c.properties?.deprecated),
     ...optionalMember("overrideType", "string", c.properties?.overrideType),
   };
 }
@@ -411,16 +413,18 @@ async function readPatchDocument(fileUrl: URL): Promise<Document> {
  */
 function convertForRemovals(obj: unknown): unknown {
   if (Array.isArray(obj)) {
-    const result = obj.map(convertForRemovals).filter((v) => v !== undefined);
-    return result.length === 0 ? null : result;
+    return obj.map(convertForRemovals).filter((v) => v !== undefined);
   }
   if (obj && typeof obj === "object") {
     const newObj: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       if (key !== "name") {
         const cleaned = convertForRemovals(value);
-        if (cleaned !== undefined) {
+        // (intentionally covers null too)
+        if (typeof cleaned === "object") {
           newObj[key] = cleaned;
+        } else if (cleaned !== undefined) {
+          newObj[key] = null;
         }
       }
     }
