@@ -48,16 +48,15 @@ function string(arg: unknown): string {
   return arg;
 }
 
-function handleTyped(type: Node): Typed {
+function handleTyped(type: Node): DeepPartial<Typed> {
   const isTyped = type.name == "type";
   if (!isTyped) {
     throw new Error("Expected a type node");
   }
-  const name = string(type.values[0]);
   const subType =
     type.children.length > 0 ? handleTyped(type.children[0]) : undefined;
   return {
-    type: name,
+    ...optionalMember("type", "string", type.values[0]),
     subtype: subType,
     ...optionalMember("nullable", "boolean", type.properties?.nullable),
   };
@@ -167,8 +166,9 @@ function handleMixinAndInterfaces(
   const name = string(node.properties?.name || node.values[0]);
 
   const event: Event[] = [];
-  const property: Record<string, Partial<Property>> = {};
+  const property: Record<string, DeepPartial<Property>> = {};
   let method: Record<string, DeepPartial<OverridableMethod>> = {};
+  let typeParameters = {};
 
   for (const child of node.children) {
     switch (child.name) {
@@ -188,12 +188,17 @@ function handleMixinAndInterfaces(
         });
         break;
       }
+      case "typeParameters": {
+        typeParameters = handleTypeParameters(child);
+        break;
+      }
       default:
         throw new Error(`Unknown node name: ${child.name}`);
     }
   }
 
   const interfaceObject = type === "interface" && {
+    ...typeParameters,
     ...optionalMember("exposed", "string", node.properties?.exposed),
     ...optionalMember("deprecated", "string", node.properties?.deprecated),
     ...optionalMember(
@@ -240,7 +245,7 @@ function handleEvent(child: Node): Event {
  * Handles a child node of type "property" and adds it to the property object.
  * @param child The child node to handle.
  */
-function handleProperty(child: Node): Partial<Property> {
+function handleProperty(child: Node): DeepPartial<Property> {
   let typeNode: Node | undefined;
   for (const c of child.children) {
     if (c.name === "type") {
