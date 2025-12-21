@@ -129,7 +129,6 @@
             "AudioEncoderConfig": {
                 "members": {
                     "member": {
-                        "aac": null, // Blink only as of 2024-09
                         "flac": null // Blink only as of 2024-09
                     }
                 }
