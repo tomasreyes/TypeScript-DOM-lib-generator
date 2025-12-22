@@ -975,6 +975,8 @@ interface Keyframe {
 
 interface KeyframeAnimationOptions extends KeyframeEffectOptions {
     id?: string;
+    rangeEnd?: TimelineRangeOffset | CSSNumericValue | CSSKeywordValue | string;
+    rangeStart?: TimelineRangeOffset | CSSNumericValue | CSSKeywordValue | string;
     timeline?: AnimationTimeline | null;
 }
 
@@ -2372,6 +2374,11 @@ interface TextDecoderOptions {
 interface TextEncoderEncodeIntoResult {
     read: number;
     written: number;
+}
+
+interface TimelineRangeOffset {
+    offset?: CSSNumericValue;
+    rangeName?: string | null;
 }
 
 interface ToggleEventInit extends EventInit {
