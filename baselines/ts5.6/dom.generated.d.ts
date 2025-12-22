@@ -5882,6 +5882,7 @@ interface CSSRule {
     readonly MEDIA_RULE: 4;
     readonly FONT_FACE_RULE: 5;
     readonly PAGE_RULE: 6;
+    readonly MARGIN_RULE: 9;
     readonly NAMESPACE_RULE: 10;
     readonly KEYFRAMES_RULE: 7;
     readonly KEYFRAME_RULE: 8;
@@ -5899,6 +5900,7 @@ declare var CSSRule: {
     readonly MEDIA_RULE: 4;
     readonly FONT_FACE_RULE: 5;
     readonly PAGE_RULE: 6;
+    readonly MARGIN_RULE: 9;
     readonly NAMESPACE_RULE: 10;
     readonly KEYFRAMES_RULE: 7;
     readonly KEYFRAME_RULE: 8;
