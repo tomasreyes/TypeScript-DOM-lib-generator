@@ -286,10 +286,5 @@
                 }
             }
         }
-    },
-    "typedefs": {
-        "typedef": [
-            "ArrayBufferView"
-        ]
     }
 }
