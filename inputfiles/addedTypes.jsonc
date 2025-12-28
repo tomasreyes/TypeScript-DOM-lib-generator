@@ -418,18 +418,6 @@
                         }
                     }
                 }
-            },
-            "ProcessingInstruction": {
-                "name": "ProcessingInstruction",
-                "properties": {
-                    "property": {
-                        "ownerDocument": {
-                            "name": "ownerDocument",
-                            "readonly": true,
-                            "type": "Document"
-                        }
-                    }
-                }
             }
         }
     },
