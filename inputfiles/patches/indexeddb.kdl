@@ -7,3 +7,13 @@ interface IDBRequest {
 }
 
 interface IDBOpenDBRequest extends=IDBRequest<IDBDatabase>
+
+typedef IDBValidKey {
+   type long
+   type DOMString
+   type Date
+   type BufferSource
+   type sequence {
+      type IDBValidKey
+   }
+}
