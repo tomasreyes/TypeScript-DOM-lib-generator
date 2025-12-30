@@ -301,15 +301,6 @@
                     }
                 }
             },
-            "HTMLInputElement": {
-                "properties": {
-                    "property": {
-                        "labels": {
-                            "overrideType": "NodeListOf<HTMLLabelElement>"
-                        }
-                    }
-                }
-            },
             "RuntimeError": {
                 "name": "RuntimeError",
                 "extends": "Error",
