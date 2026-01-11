@@ -2889,12 +2889,6 @@
             "GPUCommandEncoder": {
                 "exposed": ""
             },
-            "GPUCompilationInfo": {
-                "exposed": ""
-            },
-            "GPUCompilationMessage": {
-                "exposed": ""
-            },
             "GPUComputePassEncoder": {
                 "exposed": ""
             },
