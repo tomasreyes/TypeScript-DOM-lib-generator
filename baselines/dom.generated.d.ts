@@ -1182,7 +1182,7 @@ interface GamepadEffectParameters {
 }
 
 interface GamepadEventInit extends EventInit {
-    gamepad: Gamepad;
+    gamepad?: Gamepad | null;
 }
 
 interface GetAnimationsOptions {
@@ -5358,7 +5358,7 @@ declare var CSSFontFaceRule: {
 };
 
 /**
- * The **`CSSFontFeatureValuesRule`** interface represents an @font-feature-values at-rule. The values of its instance properties can be accessed with the CSSFontFeatureValuesMapinterface.
+ * The **`CSSFontFeatureValuesRule`** interface represents an @font-feature-values at-rule. The values of its instance properties can be accessed with the CSSFontFeatureValuesMap interface.
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CSSFontFeatureValuesRule)
  */
@@ -16443,7 +16443,7 @@ interface GamepadEvent extends Event {
 
 declare var GamepadEvent: {
     prototype: GamepadEvent;
-    new(type: string, eventInitDict: GamepadEventInit): GamepadEvent;
+    new(type: string, eventInitDict?: GamepadEventInit): GamepadEvent;
 };
 
 /**
