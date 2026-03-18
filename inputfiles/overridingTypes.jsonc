@@ -2323,6 +2323,7 @@
                                     "param": [
                                         {
                                             "name": "chunk",
+                                            "optional": false,
                                             "overrideType": "W"
                                         }
                                     ]
@@ -2408,6 +2409,7 @@
                                     "param": [
                                         {
                                             "name": "chunk",
+                                            "optional": false,
                                             "overrideType": "O"
                                         }
                                     ]
