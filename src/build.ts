@@ -252,6 +252,7 @@ async function emitDom() {
         allowUnrelatedSetterType: true,
         useGenericTypedArrays: true,
         includeIterable: true,
+        treatAsyncSequence: true,
       },
     },
     // ts5.7 (and later)
@@ -262,6 +263,7 @@ async function emitDom() {
         useIteratorObject: true,
         allowUnrelatedSetterType: true,
         useGenericTypedArrays: true,
+        treatAsyncSequence: true,
       },
     },
     // ts5.6
