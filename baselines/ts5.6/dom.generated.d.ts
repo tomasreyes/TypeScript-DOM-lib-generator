@@ -1397,7 +1397,7 @@ interface Keyframe {
     composite?: CompositeOperationOrAuto;
     easing?: string;
     offset?: number | null;
-    [property: string]: string | number | null | undefined;
+    [property: string]: string | number | CSSStyleValue | null | undefined;
 }
 
 interface KeyframeAnimationOptions extends KeyframeEffectOptions {
@@ -2026,7 +2026,7 @@ interface PropertyIndexedKeyframes {
     composite?: CompositeOperationOrAuto | CompositeOperationOrAuto[];
     easing?: string | string[];
     offset?: number | (number | null)[];
-    [property: string]: string | string[] | number | null | (number | null)[] | undefined;
+    [property: string]: string | string[] | number | CSSStyleValue | CSSStyleValue[] | null | (number | null)[] | undefined;
 }
 
 interface PublicKeyCredentialCreationOptions {
